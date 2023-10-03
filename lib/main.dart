@@ -62,12 +62,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.favorite, color: Colors.white,),
+            icon: const Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => SavedBlogs()),
+                MaterialPageRoute(builder: (context) => SavedBlogs()),
               );
             },
           ),
@@ -89,8 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                DetailScreen(data[index])),
+                            builder: (context) => DetailScreen(data[index])),
                       );
                     },
                     child: Padding(
@@ -132,7 +133,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               );
             } else if (state is MyErrorState) {
-              return Text('Error: ${state.error}');
+              return Text(
+                'Error: ${state.error}\nTry Again.',
+                style: const TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              );
             }
             return Container();
           },
@@ -152,7 +157,6 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-
   bool isInDatabase = false;
 
   @override
@@ -212,23 +216,22 @@ class _DetailScreenState extends State<DetailScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (isInDatabase) {
-                    await DatabaseHelper.instance.deleteBlog(widget.data.id);
-                  } else {
-                    await DatabaseHelper.instance.insertBlog(widget.data);
-                  }
-                  setState(() {
-                    isInDatabase = !isInDatabase;
-                  });
-                },
-                child: Text(
-                  isInDatabase ? 'Remove from favorites' : 'Add to favorites',
-                  style: const TextStyle(
-                    color: Colors.black,
-                  ),
-                ))
+                  IconButton(
+                      onPressed: () async {
+                        if (isInDatabase) {
+                          await DatabaseHelper.instance
+                              .deleteBlog(widget.data.id);
+                        } else {
+                          await DatabaseHelper.instance.insertBlog(widget.data);
+                        }
+                        setState(() {
+                          isInDatabase = !isInDatabase;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.favorite,
+                        color: isInDatabase ? Colors.red : Colors.white,
+                      )),
                 ],
               ),
             ),
@@ -237,7 +240,6 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
-
 }
 
 class SavedBlogs extends StatefulWidget {
@@ -264,67 +266,65 @@ class _SavedBlogsState extends State<SavedBlogs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C1E1F),
-        title: const Text('Favorite Blogs',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),),
-      ),
-      backgroundColor: const Color(0xFF1C1E1F),
-      body: ListView.builder(
-      itemCount: favoriteBlogs.length,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      DetailScreen(favoriteBlogs[index])),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: const BorderSide(
-                    color: Color(0xFFFBF9F9), width: 1),
-              ),
-              color: Colors.black,
-              // color: Colors.grey[700],
-              child: Padding(
-                padding: const EdgeInsets.all(17.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.network(favoriteBlogs[index].imageUrl),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 10),
-                      child: Text(
-                        favoriteBlogs[index].title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF1C1E1F),
+          title: const Text(
+            'Favorite Blogs',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-        );
-      },
-    )
-    );
+        ),
+        backgroundColor: const Color(0xFF1C1E1F),
+        body: ListView.builder(
+          itemCount: favoriteBlogs.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailScreen(favoriteBlogs[index])),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(color: Color(0xFFFBF9F9), width: 1),
+                  ),
+                  color: Colors.black,
+                  // color: Colors.grey[700],
+                  child: Padding(
+                    padding: const EdgeInsets.all(17.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.network(favoriteBlogs[index].imageUrl),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 10),
+                          child: Text(
+                            favoriteBlogs[index].title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ));
   }
 }
-
